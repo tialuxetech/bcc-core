@@ -10,15 +10,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// Define constants
 define( 'BCC_CORE_VERSION', '0.1.0' );
 define( 'BCC_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BCC_CORE_URL', plugin_dir_url( __FILE__ ) );
 
-// Load core loader
+// Core files
 require_once BCC_CORE_PATH . 'includes/Core/Loader.php';
+require_once BCC_CORE_PATH . 'includes/Identity/Role_Manager.php';
 
-// Initialize plugin
 add_action( 'plugins_loaded', function () {
     \BCC\Core\Loader::init();
 });
