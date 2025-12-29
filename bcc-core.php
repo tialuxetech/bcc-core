@@ -21,3 +21,8 @@ require_once BCC_CORE_PATH . 'includes/Identity/Role_Manager.php';
 add_action( 'plugins_loaded', function () {
     \BCC\Core\Loader::init();
 });
+
+// Plugin activation
+register_activation_hook( __FILE__, function () {
+    do_action( 'bcc_core_activate' );
+});

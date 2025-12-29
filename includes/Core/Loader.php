@@ -16,9 +16,31 @@ final class Loader {
      * Initialize BCC Core
      */
     public static function init(): void {
+        self::register_assets();
         self::register_modules();
         self::boot_modules();
     }
+
+    /**
+     * Register global assets
+     */
+    public static function register_assets(): void {
+        add_action( 'wp_enqueue_scripts', [ self::class, 'enqueue_frontend_assets' ] );
+    }
+
+    /**
+     * Enqueue frontend scripts
+     */
+    public static function enqueue_frontend_assets(): void {
+        wp_enqueue_script(
+            'bcc-auth-acf-fix',
+            BCC_CORE_URL . 'assets/js/bcc-auth-acf-fix.js',
+            [],
+            BCC_CORE_VERSION,
+            true
+        );
+    }
+
 
     /**
      * Register core modules
@@ -27,6 +49,7 @@ final class Loader {
 
         self::$modules = apply_filters( 'bcc_core_modules', [
             \BCC\Identity\Role_Manager::class,
+            \BCC\Core\Permissions_Manager::class,
             // Future:
             // \BCC\Onboarding\Flow_Controller::class,
             // \BCC\Validation\Validation_Queue::class,

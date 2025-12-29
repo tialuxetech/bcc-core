@@ -6,32 +6,32 @@ defined( 'ABSPATH' ) || exit;
 final class Role_Manager {
 
     /**
-     * BCC role definitions
+     * Canonical BCC roles
      */
-    protected static array $roles = [
-        'bcc_validator' => [
-            'label' => 'Validator',
-        ],
-        'bcc_builder_validator' => [
-            'label' => 'Builder & Validator',
-        ],
+    private static array $roles = [
         'bcc_community' => [
             'label' => 'Community Member',
         ],
-        'bcc_nft_creator' => [
+        'bcc_validator' => [
+            'label' => 'Validator',
+        ],
+        'bcc_builder' => [
+            'label' => 'Builder',
+        ],
+        'bcc_creator' => [
             'label' => 'NFT Creator',
         ],
     ];
 
     /**
-     * Initialize Role Manager
+     * Boot Role Manager
      */
     public static function init(): void {
         add_action( 'init', [ self::class, 'register_roles' ] );
     }
 
     /**
-     * Register BCC roles with WordPress
+     * Register roles in WordPress
      */
     public static function register_roles(): void {
         foreach ( self::$roles as $role_key => $role ) {
@@ -39,29 +39,30 @@ final class Role_Manager {
                 add_role(
                     $role_key,
                     $role['label'],
-                    [] // Capabilities intentionally empty for now
+                    [] // Capabilities assigned later
                 );
             }
         }
     }
 
     /**
-     * Get all BCC roles
+     * Return all BCC roles
      */
     public static function get_roles(): array {
-        return self::$roles;
+        return array_keys( self::$roles );
     }
 
     /**
-     * Check if user has a BCC role
+     * Check if user has any BCC role
      */
     public static function user_has_bcc_role( int $user_id ): bool {
         $user = get_user_by( 'id', $user_id );
+
         if ( ! $user ) {
             return false;
         }
 
-        foreach ( array_keys( self::$roles ) as $role ) {
+        foreach ( self::get_roles() as $role ) {
             if ( in_array( $role, (array) $user->roles, true ) ) {
                 return true;
             }
