@@ -8,20 +8,27 @@ final class Role_Assignment_Listener {
     public static function init(): void {
 
         /**
-         * Fires when a user is created.
-         * This is intentionally conservative.
+         * Fires AFTER ACF saves user meta.
          */
-        add_action('user_register', [self::class, 'handle_user_register'], 20);
+        add_action('acf/save_post', [self::class, 'handle_acf_user_save'], 20);
     }
 
     /**
-     * Handle new user registration
+     * Assign role after ACF user fields are saved
      */
-    public static function handle_user_register(int $user_id): void {
+    public static function handle_acf_user_save($post_id): void {
 
-        // Delay execution slightly to allow ACF to save user meta
-        add_action('shutdown', function () use ($user_id) {
-            User_Role_Service::assign_primary_role($user_id);
-        });
+        // Only target users
+        if (strpos($post_id, 'user_') !== 0) {
+            return;
+        }
+
+        $user_id = (int) str_replace('user_', '', $post_id);
+
+        if ($user_id <= 0) {
+            return;
+        }
+
+        User_Role_Service::assign_primary_role($user_id);
     }
 }
