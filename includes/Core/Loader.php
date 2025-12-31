@@ -48,6 +48,7 @@ final class Loader {
     protected static function register_modules(): void {
 
         self::$modules = apply_filters( 'bcc_core_modules', [
+            \BCC\Identity\Role_Assignment_Listener::class,
             \BCC\Identity\Role_Manager::class,
             \BCC\Core\Permissions_Manager::class,
             \BCC\Core\Redirect_Manager::class,
