@@ -50,9 +50,9 @@ final class Loader {
         self::$modules = apply_filters( 'bcc_core_modules', [
             \BCC\Identity\Role_Manager::class,
             \BCC\Core\Permissions_Manager::class,
-            // Future:
-            // \BCC\Onboarding\Flow_Controller::class,
-            // \BCC\Validation\Validation_Queue::class,
+            \BCC\Core\Redirect_Manager::class,
+            \BCC\Integrations\PeepSo\PeepSo_Integration::class,
+            // Future modules classes can be added here:
         ]);
     }
 
