@@ -1,7 +1,7 @@
 <?php
 namespace BCC\Integrations\PeepSo;
 
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 use PeepSoProfileShortcode;
 
@@ -31,13 +31,17 @@ final class Profile_Tabs {
     public static function init(): void {
 
         // Register main profile menu
-        add_filter( 'peepso_navigation_profile', [ self::class, 'register_contribute_menu' ] );
+        add_filter('peepso_navigation_profile', [self::class, 'register_contribute_menu']);
+
+        // Flatten for dropdown & sidebar
+        add_filter('peepso_navigation_profile_dropdown', [self::class, 'flatten_submenus']);
+        add_filter('peepso_navigation_profile_sidebar', [self::class, 'flatten_submenus']);
 
         // Register segment renderers
-        foreach ( self::$lanes as $slug => $lane ) {
+        foreach (self::$lanes as $slug => $lane) {
             add_action(
                 'peepso_profile_segment_contribute-' . $slug,
-                [ self::class, 'render_lane' ]
+                [self::class, 'render_lane']
             );
         }
     }
@@ -45,16 +49,16 @@ final class Profile_Tabs {
     /**
      * Register "Contribute" profile menu + submenus
      */
-    public static function register_contribute_menu( array $links ): array {
+    public static function register_contribute_menu(array $links): array {
 
         $links['contribute'] = [
-            'label' => __( 'Contribute', 'bcc-core' ),
+            'label' => __('Contribute', 'bcc-core'),
             'icon'  => 'pso-i-users',
             'sub'   => [],
         ];
 
-        foreach ( self::$lanes as $slug => $lane ) {
-            $links['contribute']['sub'][ 'contribute-' . $slug ] = [
+        foreach (self::$lanes as $slug => $lane) {
+            $links['contribute']['sub']['contribute-' . $slug] = [
                 'label' => $lane['label'],
                 'href'  => 'contribute-' . $slug,
                 'icon'  => $lane['icon'],
@@ -65,27 +69,37 @@ final class Profile_Tabs {
     }
 
     /**
+     * Flatten submenus for avatar dropdown & sidebar menus
+     */
+    public static function flatten_submenus(array $links): array {
+        if (isset($links['contribute']['sub'])) {
+            foreach ($links['contribute']['sub'] as $sub_key => $sub_link) {
+                $links[$sub_key] = $sub_link;
+            }
+            unset($links['contribute']['sub']);
+        }
+        return $links;
+    }
+
+    /**
      * Render a contribution lane
      */
     public static function render_lane(): void {
 
-        $view_user_id = PeepSoProfileShortcode::get_instance()->get_view_user_id();
-        $segment      = PeepSoProfileShortcode::get_instance()->get_segment();
+        $segment = PeepSoProfileShortcode::get_instance()->get_segment();
+        $lane_slug = str_replace('contribute-', '', $segment);
 
-        $lane_slug = str_replace( 'contribute-', '', $segment );
-
-        if ( empty( self::$lanes[ $lane_slug ] ) ) {
+        if (empty(self::$lanes[$lane_slug])) {
+            echo '<p>' . esc_html__('This section is under construction.', 'bcc-core') . '</p>';
             return;
         }
 
-        $lane = self::$lanes[ $lane_slug ];
-
         $template = BCC_CORE_PATH . 'includes/Integrations/PeepSo/Templates/profile/contribute-' . $lane_slug . '.php';
 
-        if ( file_exists( $template ) ) {
+        if (file_exists($template)) {
             include $template;
         } else {
-            echo '<p>' . esc_html__( 'This section is under construction.', 'bcc-core' ) . '</p>';
+            echo '<p>' . esc_html__('This section is under construction.', 'bcc-core') . '</p>';
         }
     }
 }
