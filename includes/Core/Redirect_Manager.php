@@ -2,6 +2,7 @@
 namespace BCC\Core;
 
 use WP_User;
+use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,17 +15,20 @@ final class Redirect_Manager {
     public static function handle_login_redirect(
         string $redirect_to,
         string $requested_redirect_to,
-        WP_User $user
+        $user
     ): string {
 
+        // Bail if login failed or invalid user
         if ( ! $user instanceof WP_User ) {
             return $redirect_to;
         }
 
-        if ( in_array( 'administrator', $user->roles, true ) ) {
+        // Never interfere with admins
+        if ( in_array( 'administrator', (array) $user->roles, true ) ) {
             return $redirect_to;
         }
 
+        // Ensure PeepSo is available
         if ( ! class_exists( 'PeepSo' ) ) {
             return $redirect_to;
         }
@@ -39,7 +43,7 @@ final class Redirect_Manager {
         ];
 
         foreach ( $map as $role => $path ) {
-            if ( in_array( $role, $user->roles, true ) ) {
+            if ( in_array( $role, (array) $user->roles, true ) ) {
                 return home_url( $path );
             }
         }
