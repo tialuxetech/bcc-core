@@ -1,3 +1,10 @@
+<?php
+namespace BCC\Core;
+
+use WP_User;
+
+defined( 'ABSPATH' ) || exit;
+
 final class Redirect_Manager {
 
     public static function init(): void {
@@ -7,10 +14,10 @@ final class Redirect_Manager {
     public static function handle_login_redirect(
         string $redirect_to,
         string $requested_redirect_to,
-        \WP_User $user
+        WP_User $user
     ): string {
 
-        if ( ! $user instanceof \WP_User ) {
+        if ( ! $user instanceof WP_User ) {
             return $redirect_to;
         }
 
