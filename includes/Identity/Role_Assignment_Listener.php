@@ -7,31 +7,30 @@ final class Role_Assignment_Listener {
 
     public static function init(): void {
 
-        /**
-         * Fires AFTER ACF saves user meta
-         */
+        error_log('[BCC][Role_Assignment_Listener] init() called');
+
         add_action( 'acf/save_post', [ self::class, 'handle_acf_user_save' ], 20 );
     }
 
-    /**
-     * Assign role after ACF user fields are saved
-     *
-     * @param mixed $post_id
-     */
     public static function handle_acf_user_save( $post_id ): void {
 
-        // We only care about user saves
+        error_log('[BCC][Role_Assignment_Listener] acf/save_post fired. post_id: ' . print_r($post_id, true));
+
+        // Only user saves
         if ( ! is_string( $post_id ) || strpos( $post_id, 'user_' ) !== 0 ) {
+            error_log('[BCC][Role_Assignment_Listener] Not a user save. Exiting.');
             return;
         }
 
         $user_id = (int) str_replace( 'user_', '', $post_id );
 
         if ( $user_id <= 0 ) {
+            error_log('[BCC][Role_Assignment_Listener] Invalid user ID.');
             return;
         }
 
-        // Delegate role logic to the service
+        error_log('[BCC][Role_Assignment_Listener] Valid user detected. user_id: ' . $user_id);
+
         \BCC\Identity\User_Role_Service::assign_primary_role( $user_id );
     }
 }
