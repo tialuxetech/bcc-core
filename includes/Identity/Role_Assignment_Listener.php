@@ -3,6 +3,8 @@ namespace BCC\Identity;
 
 defined('ABSPATH') || exit;
 
+error_log('[BCC][BOOT] Role_Assignment_Listener file loaded');
+
 final class Role_Assignment_Listener {
 
     public static function init(): void {
