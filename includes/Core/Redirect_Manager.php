@@ -36,9 +36,9 @@ final class Redirect_Manager {
         $username = $user->user_nicename;
 
         $map = [
-            'bcc_builder'   => "profile/{$username}/contribute/builder",
-            'bcc_validator' => "profile/{$username}/contribute/validator",
-            'bcc_creator'   => "profile/{$username}/contribute/creator",
+            'bcc_builder'   => "profile/{$username}/contribute",
+            'bcc_validator' => "profile/{$username}/contribute",
+            'bcc_creator'   => "profile/{$username}/contribute",
             'bcc_community' => "profile/{$username}",
         ];
 
