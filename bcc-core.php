@@ -33,6 +33,7 @@ require_once BCC_CORE_PATH . 'includes/Identity/Role_Assignment_Listener.php';
 
 // Integrations
 require_once BCC_CORE_PATH . 'includes/Integrations/PeepSo/PeepSo_Integration.php';
+require_once BCC_CORE_PATH . 'includes/Integrations/PeepSo/Profile_Tabs.php';
 
 // --------------------------------------------------
 // BOOTSTRAP CORE AFTER PLUGINS LOAD
