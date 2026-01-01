@@ -2,7 +2,6 @@
 namespace BCC\Core;
 
 use WP_User;
-use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,6 +27,11 @@ final class Redirect_Manager {
             return $redirect_to;
         }
 
+        // Respect explicitly requested redirects (PeepSo, protected pages, etc.)
+        if ( ! empty( $requested_redirect_to ) ) {
+            return $requested_redirect_to;
+        }
+
         // Ensure PeepSo is available
         if ( ! class_exists( 'PeepSo' ) ) {
             return $redirect_to;
@@ -35,14 +39,26 @@ final class Redirect_Manager {
 
         $username = $user->user_nicename;
 
-        $map = [
+        /**
+         * Role-based redirect priority (highest → lowest)
+         */
+        $role_redirects = [
             'bcc_builder'   => "profile/{$username}/contribute",
             'bcc_validator' => "profile/{$username}/contribute",
             'bcc_creator'   => "profile/{$username}/contribute",
             'bcc_community' => "profile/{$username}",
         ];
 
-        foreach ( $map as $role => $path ) {
+        /**
+         * Allow other modules to modify redirect map
+         */
+        $role_redirects = apply_filters(
+            'bcc_core_login_redirect_map',
+            $role_redirects,
+            $user
+        );
+
+        foreach ( $role_redirects as $role => $path ) {
             if ( in_array( $role, (array) $user->roles, true ) ) {
                 return home_url( $path );
             }
