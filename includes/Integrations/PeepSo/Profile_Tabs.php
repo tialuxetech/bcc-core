@@ -11,7 +11,7 @@ final class Profile_Tabs {
      * Contributor lanes
      */
     private static array $lanes = [
-        'builder'   => [
+        'builder' => [
             'label' => 'Builder',
             'icon'  => 'pso-i-hammer',
             'role'  => 'bcc_builder',
@@ -21,33 +21,34 @@ final class Profile_Tabs {
             'icon'  => 'pso-i-check-circle',
             'role'  => 'bcc_validator',
         ],
-        'creator'   => [
+        'creator' => [
             'label' => 'Creator',
             'icon'  => 'pso-i-brush',
             'role'  => 'bcc_creator',
         ],
     ];
 
+    /**
+     * Boot integration
+     */
     public static function init(): void {
 
-        // Register main profile menu
+        // Profile cover navigation (supports nested menus)
         add_filter('peepso_navigation_profile', [self::class, 'register_contribute_menu']);
 
-        // Flatten for dropdown & sidebar
-        add_filter('peepso_navigation_profile_dropdown', [self::class, 'flatten_submenus']);
-        add_filter('peepso_navigation_profile_sidebar', [self::class, 'flatten_submenus']);
+        // Dropdown + sidebar require flattened menus
+        add_filter('peepso_navigation_profile_dropdown', [self::class, 'flatten_contribute_menu']);
+        add_filter('peepso_navigation_profile_sidebar', [self::class, 'flatten_contribute_menu']);
 
-        // Register segment renderers
-        foreach (self::$lanes as $slug => $lane) {
-            add_action(
-                'peepso_profile_segment_contribute-' . $slug,
-                [self::class, 'render_lane']
-            );
-        }
+        // SINGLE profile segment
+        add_action(
+            'peepso_profile_segment_contribute',
+            [self::class, 'render_contribute']
+        );
     }
 
     /**
-     * Register "Contribute" profile menu + submenus
+     * Register "Contribute" menu with submenus (profile cover only)
      */
     public static function register_contribute_menu(array $links): array {
 
@@ -69,37 +70,52 @@ final class Profile_Tabs {
     }
 
     /**
-     * Flatten submenus for avatar dropdown & sidebar menus
+     * Flatten Contribute submenus for dropdown + sidebar
      */
-    public static function flatten_submenus(array $links): array {
-        if (isset($links['contribute']['sub'])) {
-            foreach ($links['contribute']['sub'] as $sub_key => $sub_link) {
-                $links[$sub_key] = $sub_link;
-            }
-            unset($links['contribute']['sub']);
+    public static function flatten_contribute_menu(array $links): array {
+
+        if (!isset($links['contribute']['sub'])) {
+            return $links;
         }
+
+        foreach ($links['contribute']['sub'] as $key => $item) {
+            $links[$key] = [
+                'label' => __('Contribute: ', 'bcc-core') . $item['label'],
+                'href'  => $item['href'],
+                'icon'  => $item['icon'],
+            ];
+        }
+
+        unset($links['contribute']);
+
         return $links;
     }
 
     /**
-     * Render a contribution lane
+     * Render Contribute profile page (with internal sub-tabs)
      */
-    public static function render_lane(): void {
+    public static function render_contribute(): void {
 
-        $segment = PeepSoProfileShortcode::get_instance()->get_segment();
-        $lane_slug = str_replace('contribute-', '', $segment);
+        $profile = PeepSoProfileShortcode::get_instance();
+        $segment = $profile->get_segment();
 
-        if (empty(self::$lanes[$lane_slug])) {
-            echo '<p>' . esc_html__('This section is under construction.', 'bcc-core') . '</p>';
-            return;
+        // Determine active tab
+        $tab = str_replace('contribute-', '', $segment);
+
+        if (!isset(self::$lanes[$tab])) {
+            $tab = 'builder'; // default tab
         }
 
-        $template = BCC_CORE_PATH . 'includes/Integrations/PeepSo/Templates/profile/contribute-' . $lane_slug . '.php';
+        // Make data available to template
+        $lanes = self::$lanes;
+        $active_tab = $tab;
+
+        $template = BCC_CORE_PATH . 'includes/Integrations/PeepSo/Templates/profile/contribute.php';
 
         if (file_exists($template)) {
             include $template;
         } else {
-            echo '<p>' . esc_html__('This section is under construction.', 'bcc-core') . '</p>';
+            echo '<p>' . esc_html__('Contribute page not available.', 'bcc-core') . '</p>';
         }
     }
 }
