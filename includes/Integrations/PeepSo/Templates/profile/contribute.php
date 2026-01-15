@@ -82,22 +82,22 @@ if (!isset($sections[$section])) {
 
             <div class="ps-profile__edit">
 
-                <!-- INTERNAL SUBMENU (About-style) -->
-                <div class="ps-profile__edit-tabs">
+                <!-- INTERNAL SUBMENU -->
+                <div class="ps-tabs ps-tabs--center ps-profile__edit-tabs">
                     <?php foreach ($sections as $slug => $data): ?>
-                        <a
-                            href="<?php echo esc_attr('contribute' . ($slug !== 'dashboard' ? '/' . $slug : '')); ?>"
-                            class="ps-profile__edit-tab <?php echo $slug === $section ? 'active' : ''; ?>"
-                        >
-                            <i class="<?php echo esc_attr($data['icon']); ?>"></i>
-                            <?php echo esc_html($data['label']); ?>
-                        </a>
+                        <div class="ps-tabs__item <?php echo $slug === $section ? 'ps-tabs__item--active' : ''; ?>">
+                            <a href="<?php echo esc_attr('contribute' . ($slug !== 'dashboard' ? '/' . $slug : '')); ?>">
+                                <i class="<?php echo esc_attr($data['icon']); ?>"></i>
+                                <?php echo esc_html($data['label']); ?>
+                            </a>
+                        </div>
                     <?php endforeach; ?>
                 </div>
 
+
                 <!-- ACTIVE SECTION CONTENT -->
                 <div class="ps-profile__edit-tab ps-profile__edit-tab--about">
-                    <div class="ps-profile__about">
+                    <div class="ps-profile__content">
 
                         <?php
                         $section_file = __DIR__ . '/' . $sections[$section]['file'];
