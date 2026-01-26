@@ -32,11 +32,18 @@ final class Profile_Tabs {
      */
     public static function register_contribute_menu(array $links): array {
 
-        $links['contribute'] = [
-            'label' => __('Contribute', 'bcc-core'),
-            'href'  => 'contribute',
-            'icon'  => 'pso-i-rectangle-list',
-        ];
+        $current_user = wp_get_current_user();
+
+        $allowed_roles = ['administrator', 'bcc_builder', 'bcc_validator', 'bcc_creator'];
+    
+        // Only show menu if user has one of the allowed roles
+        if (array_intersect($allowed_roles, (array) $current_user->roles)) {
+            $links['contribute'] = [
+                'label' => __('Contribute', 'bcc-core'),
+                'href'  => 'contribute',
+                'icon'  => 'pso-i-rectangle-list',
+            ];
+        }
 
         return $links;
     }
@@ -64,6 +71,14 @@ final class Profile_Tabs {
      * Render Contribute profile page
      */
     public static function render_contribute(): void {
+        
+        $current_user = wp_get_current_user();
+        $allowed_roles = ['administrator', 'bcc_builder', 'bcc_validator', 'bcc_creator'];
+    
+        if (!array_intersect($allowed_roles, (array) $current_user->roles)) {
+            wp_safe_redirect(site_url('/become-a-contributor'));
+            exit;
+        }
 
         $template = BCC_CORE_PATH . 'includes/Integrations/PeepSo/Templates/profile/contribute.php';
 
