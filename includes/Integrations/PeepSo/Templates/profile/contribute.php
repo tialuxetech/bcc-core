@@ -19,8 +19,10 @@ if (!$profile_user instanceof WP_User) {
 }
 
 // --------------------------------------------------
-// INTERNAL ROUTING (LIKE /about/preferences/)
+// INTERNAL ROUTING
 // --------------------------------------------------
+$profile_url      = $profile->get_profileurl();
+$contribute_base  = trailingslashit($profile_url . 'contribute');
 $request_uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 $parts       = explode('/', $request_uri);
 
@@ -38,12 +40,12 @@ foreach ($parts as $index => $part) {
 $sections = [
     'dashboard' => [
         'label' => __('Contribute', 'bcc-core'),
-        'icon'  => 'pso-i-users',
+        'icon'  => 'pso-i-rectangle-list',
         'file'  => 'contribute-dashboard.php',
     ],
     'build' => [
         'label' => __('Build', 'bcc-core'),
-        'icon'  => 'pso-i-hammer',
+        'icon'  => 'pso-i-user-pen',
         'file'  => 'contribute-builder.php',
     ],
     'validate' => [
@@ -53,7 +55,7 @@ $sections = [
     ],
     'create' => [
         'label' => __('Create', 'bcc-core'),
-        'icon'  => 'pso-i-brush',
+        'icon'  => 'pso-i-pen-field',
         'file'  => 'contribute-creator.php',
     ],
 ];
@@ -86,7 +88,11 @@ if (!isset($sections[$section])) {
                 <div class="ps-tabs ps-tabs--center ps-profile__edit-tabs">
                     <?php foreach ($sections as $slug => $data): ?>
                         <div class="ps-tabs__item <?php echo $slug === $section ? 'ps-tabs__item--active' : ''; ?>">
-                            <a href="<?php echo esc_attr('contribute' . ($slug !== 'dashboard' ? '/' . $slug : '')); ?>">
+                            <a href="<?php echo esc_url(
+                                $slug === 'dashboard'
+                                    ? $contribute_base
+                                    : $contribute_base . $slug
+                            ); ?>">
                                 <i class="<?php echo esc_attr($data['icon']); ?>"></i>
                                 <?php echo esc_html($data['label']); ?>
                             </a>
