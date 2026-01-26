@@ -21,8 +21,15 @@ if (!$profile_user instanceof WP_User) {
 // --------------------------------------------------
 // INTERNAL ROUTING
 // --------------------------------------------------
-$profile_url      = $profile->get_profileurl();
+$peepso_user = PeepSoUser::get_instance($profile_user_id);
+
+if (!$peepso_user) {
+    return;
+}
+
+$profile_url     = $peepso_user->get_profileurl();
 $contribute_base  = trailingslashit($profile_url . 'contribute');
+
 $request_uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 $parts       = explode('/', $request_uri);
 
@@ -39,7 +46,7 @@ foreach ($parts as $index => $part) {
 // Allowed internal sections
 $sections = [
     'dashboard' => [
-        'label' => __('Contribute', 'bcc-core'),
+        'label' => __('Overview', 'bcc-core'),
         'icon'  => 'pso-i-rectangle-list',
         'file'  => 'contribute-dashboard.php',
     ],

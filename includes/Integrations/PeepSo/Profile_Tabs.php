@@ -12,6 +12,13 @@ final class Profile_Tabs {
 
         // Register ONE profile menu
         add_filter('peepso_navigation_profile', [self::class, 'register_contribute_menu']);
+        
+        // Control profile menu order
+        add_filter(
+            'peepso_filter_navigation_profile_order',
+            [self::class, 'order_profile_tabs'],
+            20
+        );
 
         // Register ONE profile segment
         add_action(
@@ -28,14 +35,33 @@ final class Profile_Tabs {
         $links['contribute'] = [
             'label' => __('Contribute', 'bcc-core'),
             'href'  => 'contribute',
-            'icon'  => 'pso-i-users',
+            'icon'  => 'pso-i-rectangle-list',
         ];
 
         return $links;
     }
 
     /**
-     * Render Contribute profile page (internal routing handled in template)
+     * Place Contribute after About tab
+     */
+    public static function order_profile_tabs(array $order): array {
+        $order = array_values(array_diff($order, ['contribute']));
+
+        $new_order = [];
+
+        foreach ($order as $key) {
+            $new_order[] = $key;
+
+            if ($key === 'about') {
+                $new_order[] = 'contribute';
+            }
+        }
+
+        return $new_order;
+    }
+
+    /**
+     * Render Contribute profile page
      */
     public static function render_contribute(): void {
 
