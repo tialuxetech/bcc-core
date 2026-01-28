@@ -45,7 +45,7 @@ return [
             'bcc_vote',
         ],
 
-        'bcc_builder_validator' => [
+        'bcc_builder' => [
             'bcc_view_profile',
             'bcc_edit_own_profile',
             'bcc_submit_contribution',
@@ -67,7 +67,7 @@ return [
             'bcc_view_governance',
         ],
 
-        'bcc_nft_creator' => [
+        'bcc_creator' => [
             'bcc_view_profile',
             'bcc_create_asset',
             'bcc_mint_nft',
