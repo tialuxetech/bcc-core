@@ -1,13 +1,15 @@
 <?php
 defined('ABSPATH') || exit;
 
+use BCC\Integrations\PeepSo\Helpers\Profile_Helper;
+
 $current_user = wp_get_current_user();
 $user_roles   = (array) $current_user->roles;
 
 global $wp_roles;
 
 /**
- * Helper: check if user has a BCC role
+ * Helper: check if user has a role
  */
 $has_role = function (string $role) use ($user_roles): bool {
     return in_array($role, $user_roles, true);
@@ -24,24 +26,20 @@ foreach ($user_roles as $role_key) {
 }
 
 /**
- * Profile URLs
+ * URLs (via helper — single source of truth)
  */
-$profile_user_id = PeepSoProfileShortcode::get_instance()->get_view_user_id();
+$contribute_base = Profile_Helper::get_contribute_base_url();
 
-$peepso_user = PeepSoUser::get_instance($profile_user_id);
-
-if (!$peepso_user) {
+if (!$contribute_base) {
     return;
 }
 
-$profile_url = $peepso_user->get_profileurl();
-
-$build_url    = trailingslashit($profile_url) . 'contribute/build';
-$validate_url = trailingslashit($profile_url) . 'contribute/validate';
-$create_url   = trailingslashit($profile_url) . 'contribute/create';
+$build_url    = $contribute_base . 'build';
+$validate_url = $contribute_base . 'validate';
+$create_url   = $contribute_base . 'create';
 ?>
 
-<div class="ps-page ps-page-body">
+<div class="ps-profile__about-fields ps-js-profile-list bcc-contribute-overview">
 
     <!-- CONTRIBUTOR STATUS -->
     <div class="ps-card ps-card--profile">

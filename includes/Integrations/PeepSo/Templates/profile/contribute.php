@@ -2,14 +2,18 @@
 defined('ABSPATH') || exit;
 
 use PeepSoProfileShortcode;
+use BCC\Integrations\PeepSo\Helpers\Profile_Helper;
 
 // --------------------------------------------------
 // PROFILE CONTEXT
 // --------------------------------------------------
 $profile = PeepSoProfileShortcode::get_instance();
-
 $profile_user_id = $profile->get_view_user_id();
-$viewer_user_id  = get_current_user_id();
+
+if (!$profile_user_id) {
+    echo '<p>' . esc_html__('Invalid profile context.', 'bcc-core') . '</p>';
+    return;
+}
 
 $profile_user = get_user_by('id', $profile_user_id);
 
@@ -19,21 +23,21 @@ if (!$profile_user instanceof WP_User) {
 }
 
 // --------------------------------------------------
-// INTERNAL ROUTING
+// BASE URL (via helper — authoritative)
 // --------------------------------------------------
-$peepso_user = PeepSoUser::get_instance($profile_user_id);
+$contribute_base = Profile_Helper::get_contribute_base_url();
 
-if (!$peepso_user) {
+if (!$contribute_base) {
+    echo '<p>' . esc_html__('Unable to load contribute section.', 'bcc-core') . '</p>';
     return;
 }
 
-$profile_url     = $peepso_user->get_profileurl();
-$contribute_base  = trailingslashit($profile_url . 'contribute');
-
+// --------------------------------------------------
+// INTERNAL ROUTING
+// --------------------------------------------------
 $request_uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 $parts       = explode('/', $request_uri);
 
-// Find "contribute" in URL and read the next segment
 $section = 'dashboard';
 
 foreach ($parts as $index => $part) {
@@ -67,7 +71,7 @@ $sections = [
     ],
 ];
 
-// Fallback to dashboard
+// Fallback
 if (!isset($sections[$section])) {
     $section = 'dashboard';
 }
@@ -81,7 +85,6 @@ if (!isset($sections[$section])) {
         <div class="ps-profile ps-profile--edit ps-profile--about">
 
             <?php
-            // Highlight "Contribute" in profile navigation
             PeepSoTemplate::exec_template(
                 'profile',
                 'focus',
@@ -106,7 +109,6 @@ if (!isset($sections[$section])) {
                         </div>
                     <?php endforeach; ?>
                 </div>
-
 
                 <!-- ACTIVE SECTION CONTENT -->
                 <div class="ps-profile__edit-tab ps-profile__edit-tab--about">

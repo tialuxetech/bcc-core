@@ -1,7 +1,7 @@
 <?php
 namespace BCC\Core;
 
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 final class Loader {
 
@@ -16,16 +16,24 @@ final class Loader {
      * Initialize BCC Core
      */
     public static function init(): void {
+        self::load_helpers();
         self::register_assets();
         self::register_modules();
         self::boot_modules();
     }
 
     /**
+     * Load global helper files
+     */
+    protected static function load_helpers(): void {
+        require_once BCC_CORE_PATH . 'includes/Integrations/PeepSo/Helpers/Profile_Helper.php';
+    }
+
+    /**
      * Register global assets
      */
     public static function register_assets(): void {
-        add_action( 'wp_enqueue_scripts', [ self::class, 'enqueue_frontend_assets' ] );
+        add_action('wp_enqueue_scripts', [self::class, 'enqueue_frontend_assets']);
     }
 
     /**
@@ -41,19 +49,17 @@ final class Loader {
         );
     }
 
-
     /**
      * Register core modules
      */
     protected static function register_modules(): void {
 
-        self::$modules = apply_filters( 'bcc_core_modules', [
+        self::$modules = apply_filters('bcc_core_modules', [
             \BCC\Identity\Role_Assignment_Listener::class,
             \BCC\Identity\Role_Manager::class,
             \BCC\Core\Permissions_Manager::class,
             \BCC\Core\Redirect_Manager::class,
             \BCC\Integrations\PeepSo\PeepSo_Integration::class,
-            // Future modules classes can be added here:
         ]);
     }
 
@@ -61,8 +67,8 @@ final class Loader {
      * Boot all registered modules
      */
     protected static function boot_modules(): void {
-        foreach ( self::$modules as $module ) {
-            if ( class_exists( $module ) && method_exists( $module, 'init' ) ) {
+        foreach (self::$modules as $module) {
+            if (class_exists($module) && method_exists($module, 'init')) {
                 $module::init();
             }
         }
