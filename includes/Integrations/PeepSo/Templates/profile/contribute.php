@@ -48,7 +48,7 @@ $sections = [
     'dashboard' => [
         'label' => __('Overview', 'bcc-core'),
         'icon'  => 'pso-i-rectangle-list',
-        'file'  => 'contribute-dashboard.php',
+        'file'  => 'contribute-overview.php',
     ],
     'build' => [
         'label' => __('Build', 'bcc-core'),
