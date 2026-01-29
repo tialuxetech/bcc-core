@@ -1,35 +1,32 @@
 <?php
 defined('ABSPATH') || exit;
 
-use BCC\Integrations\PeepSo\Helpers\Profile_Helper;
-
 $current_user = wp_get_current_user();
-$user_roles   = (array) $current_user->roles;
-
-global $wp_roles;
 
 /**
- * Helper: check if user has a role
+ * Helper: check if user has a capability
  */
-$has_role = function (string $role) use ($user_roles): bool {
-    return in_array($role, $user_roles, true);
+$can = function(string $cap): bool {
+    return current_user_can($cap);
 };
 
 /**
- * Human-readable role names
+ * Human-readable active roles (optional, still useful)
  */
+global $wp_roles;
 $readable_roles = [];
-foreach ($user_roles as $role_key) {
+foreach ((array)$current_user->roles as $role_key) {
     if (isset($wp_roles->roles[$role_key])) {
         $readable_roles[] = $wp_roles->roles[$role_key]['name'];
     }
 }
 
 /**
- * URLs (via helper — single source of truth)
+ * Profile URLs
  */
-$contribute_base = Profile_Helper::get_contribute_base_url();
+use BCC\Integrations\PeepSo\Helpers\Profile_Helper;
 
+$contribute_base = Profile_Helper::get_contribute_base_url();
 if (!$contribute_base) {
     return;
 }
@@ -44,10 +41,7 @@ $create_url   = $contribute_base . 'create';
     <!-- CONTRIBUTOR STATUS -->
     <div class="ps-card ps-card--profile">
         <div class="ps-card__body">
-
-            <h3 class="ps-card__title">
-                <?php esc_html_e('Contributor Overview', 'bcc-core'); ?>
-            </h3>
+            <h3 class="ps-card__title"><?php esc_html_e('Contributor Overview', 'bcc-core'); ?></h3>
 
             <p class="ps-text">
                 <?php esc_html_e(
@@ -60,19 +54,15 @@ $create_url   = $contribute_base . 'create';
                 <strong><?php esc_html_e('Your active roles:', 'bcc-core'); ?></strong>
                 <?php echo esc_html(implode(', ', $readable_roles)); ?>
             </p>
-
         </div>
     </div>
 
-    <!-- ROLE-BASED ACTIONS -->
+    <!-- ROLE-BASED ACTIONS (now capability-based) -->
     <div class="ps-card ps-card--profile">
         <div class="ps-card__body">
+            <h4 class="ps-card__title"><?php esc_html_e('Available Actions', 'bcc-core'); ?></h4>
 
-            <h4 class="ps-card__title">
-                <?php esc_html_e('Available Actions', 'bcc-core'); ?>
-            </h4>
-
-            <?php if ($has_role('bcc_builder')) : ?>
+            <?php if ($can('bcc_can_build')): ?>
                 <div class="ps-widget">
                     <p class="ps-text">
                         <strong><?php esc_html_e('Builder', 'bcc-core'); ?></strong><br>
@@ -84,7 +74,7 @@ $create_url   = $contribute_base . 'create';
                 </div>
             <?php endif; ?>
 
-            <?php if ($has_role('bcc_validator')) : ?>
+            <?php if ($can('bcc_can_validate')): ?>
                 <div class="ps-widget">
                     <p class="ps-text">
                         <strong><?php esc_html_e('Validator', 'bcc-core'); ?></strong><br>
@@ -96,7 +86,7 @@ $create_url   = $contribute_base . 'create';
                 </div>
             <?php endif; ?>
 
-            <?php if ($has_role('bcc_creator')) : ?>
+            <?php if ($can('bcc_can_create')): ?>
                 <div class="ps-widget">
                     <p class="ps-text">
                         <strong><?php esc_html_e('NFT Creator', 'bcc-core'); ?></strong><br>
@@ -107,25 +97,19 @@ $create_url   = $contribute_base . 'create';
                     </a>
                 </div>
             <?php endif; ?>
-
         </div>
     </div>
 
     <!-- GUIDANCE -->
     <div class="ps-card ps-card--profile">
         <div class="ps-card__body">
-
-            <h4 class="ps-card__title">
-                <?php esc_html_e('Need help getting started?', 'bcc-core'); ?>
-            </h4>
-
+            <h4 class="ps-card__title"><?php esc_html_e('Need help getting started?', 'bcc-core'); ?></h4>
             <p class="ps-text">
                 <?php esc_html_e(
                     'Each role has specific responsibilities. Use the sections above to begin contributing or continue where you left off.',
                     'bcc-core'
                 ); ?>
             </p>
-
         </div>
     </div>
 

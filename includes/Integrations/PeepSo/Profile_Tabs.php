@@ -1,6 +1,8 @@
 <?php
 namespace BCC\Integrations\PeepSo;
 
+use BCC\Core\Permissions_Manager;
+
 defined('ABSPATH') || exit;
 
 final class Profile_Tabs {
@@ -12,7 +14,7 @@ final class Profile_Tabs {
 
         // Register ONE profile menu
         add_filter('peepso_navigation_profile', [self::class, 'register_contribute_menu']);
-        
+
         // Control profile menu order
         add_filter(
             'peepso_filter_navigation_profile_order',
@@ -34,10 +36,8 @@ final class Profile_Tabs {
 
         $current_user = wp_get_current_user();
 
-        $allowed_roles = ['administrator', 'bcc_builder', 'bcc_validator', 'bcc_creator'];
-    
-        // Only show menu if user has one of the allowed roles
-        if (array_intersect($allowed_roles, (array) $current_user->roles)) {
+        // Only show menu if user has capability to view contributions
+        if (current_user_can('bcc_view_profile') && current_user_can('bcc_view_contribution_status')) {
             $links['contribute'] = [
                 'label' => __('Contribute', 'bcc-core'),
                 'href'  => 'contribute',
@@ -71,11 +71,11 @@ final class Profile_Tabs {
      * Render Contribute profile page
      */
     public static function render_contribute(): void {
-        
+
         $current_user = wp_get_current_user();
-        $allowed_roles = ['administrator', 'bcc_builder', 'bcc_validator', 'bcc_creator'];
-    
-        if (!array_intersect($allowed_roles, (array) $current_user->roles)) {
+
+        // Redirect if user cannot view contributions
+        if (!current_user_can('bcc_view_profile') || !current_user_can('bcc_view_contribution_status')) {
             wp_safe_redirect(site_url('/become-a-contributor'));
             exit;
         }

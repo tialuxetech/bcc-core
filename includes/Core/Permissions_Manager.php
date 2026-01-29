@@ -13,8 +13,8 @@ final class Permissions_Manager {
     public static function init(): void {
         self::load_config();
 
-        add_action( 'bcc_core_activate', [ self::class, 'assign_capabilities' ] );
-        add_action( 'bcc_core_sync_permissions', [ self::class, 'assign_capabilities' ] );
+        add_action( 'bcc_core_activate', [ self::class, 'sync_capabilities' ] );
+        add_action( 'plugins_loaded', [ self::class, 'maybe_sync_capabilities' ] );
     }
 
     /**
@@ -30,9 +30,9 @@ final class Permissions_Manager {
     }
 
     /**
-     * Assign capabilities to roles
+     * Sync capabilities to roles
      */
-    public static function assign_capabilities(): void {
+    public static function sync_capabilities(): void {
 
         if ( empty( self::$config['role_map'] ) ) {
             return;
@@ -49,5 +49,36 @@ final class Permissions_Manager {
                 $role->add_cap( $cap );
             }
         }
+
+        // Remove deprecated capabilities
+        if ( ! empty( self::$config['deprecated_capabilities'] ) ) {
+            foreach ( wp_roles()->roles as $role_key => $data ) {
+
+                $role = get_role( $role_key );
+                if ( ! $role ) {
+                    continue;
+                }
+
+                foreach ( self::$config['deprecated_capabilities'] as $cap ) {
+                    $role->remove_cap( $cap );
+                }
+            }
+        }
+
+        update_option( 'bcc_core_cap_version', BCC_CORE_CAP_VERSION );
+    }
+
+    /**
+     * Sync only when capability version changes
+     */
+    public static function maybe_sync_capabilities(): void {
+
+        $stored = get_option( 'bcc_core_cap_version' );
+
+        if ( $stored === BCC_CORE_CAP_VERSION ) {
+            return;
+        }
+
+        self::sync_capabilities();
     }
 }
