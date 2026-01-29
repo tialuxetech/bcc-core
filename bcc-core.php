@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 define( 'BCC_CORE_VERSION', '0.1.0' );
 define( 'BCC_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BCC_CORE_URL', plugin_dir_url( __FILE__ ) );
-define( 'BCC_CORE_CAP_VERSION', '1.0.0' );
+define( 'BCC_CORE_CAP_VERSION', '1.0.4' );
 
 
 // --------------------------------------------------

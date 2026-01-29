@@ -83,9 +83,6 @@ return [
 
         'bcc_community' => [
             'bcc_view_profile',
-            'bcc_submit_contribution',
-            'bcc_view_contribution_status',
-            'bcc_view_governance',
         ],
     ],
 ];

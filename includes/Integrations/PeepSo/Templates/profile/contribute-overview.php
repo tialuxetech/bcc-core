@@ -62,43 +62,48 @@ $create_url   = $contribute_base . 'create';
         <div class="ps-card__body">
             <h4 class="ps-card__title"><?php esc_html_e('Available Actions', 'bcc-core'); ?></h4>
 
-            <?php if ($can('bcc_can_build')): ?>
-                <div class="ps-widget">
-                    <p class="ps-text">
-                        <strong><?php esc_html_e('Builder', 'bcc-core'); ?></strong><br>
-                        <?php esc_html_e('Submit new builds and manage your contributions.', 'bcc-core'); ?>
-                    </p>
-                    <a href="<?php echo esc_url($build_url); ?>" class="ps-btn ps-btn--primary ps-btn--sm">
-                        <?php esc_html_e('Go to Build', 'bcc-core'); ?>
-                    </a>
-                </div>
-            <?php endif; ?>
+            <div class="bcc-contribute-actions" style="display: flex; flex-wrap: wrap; gap: 16px;">
 
-            <?php if ($can('bcc_can_validate')): ?>
-                <div class="ps-widget">
-                    <p class="ps-text">
-                        <strong><?php esc_html_e('Validator', 'bcc-core'); ?></strong><br>
-                        <?php esc_html_e('Review and validate community submissions.', 'bcc-core'); ?>
-                    </p>
-                    <a href="<?php echo esc_url($validate_url); ?>" class="ps-btn ps-btn--primary ps-btn--sm">
-                        <?php esc_html_e('Go to Validate', 'bcc-core'); ?>
-                    </a>
-                </div>
-            <?php endif; ?>
+                <?php if ($can('bcc_can_build')): ?>
+                    <div class="ps-widget" style="flex: 1 1 calc(33.333% - 16px); box-sizing: border-box;">
+                        <p class="ps-text">
+                            <strong><?php esc_html_e('Builder', 'bcc-core'); ?></strong><br>
+                            <?php esc_html_e('Submit new builds and manage your contributions.', 'bcc-core'); ?>
+                        </p>
+                        <a href="<?php echo esc_url($build_url); ?>" class="ps-btn ps-btn--primary ps-btn--sm">
+                            <?php esc_html_e('Go to Build', 'bcc-core'); ?>
+                        </a>
+                    </div>
+                <?php endif; ?>
 
-            <?php if ($can('bcc_can_create')): ?>
-                <div class="ps-widget">
-                    <p class="ps-text">
-                        <strong><?php esc_html_e('NFT Creator', 'bcc-core'); ?></strong><br>
-                        <?php esc_html_e('Create and manage NFT assets.', 'bcc-core'); ?>
-                    </p>
-                    <a href="<?php echo esc_url($create_url); ?>" class="ps-btn ps-btn--primary ps-btn--sm">
-                        <?php esc_html_e('Go to Create', 'bcc-core'); ?>
-                    </a>
-                </div>
-            <?php endif; ?>
+                <?php if ($can('bcc_can_validate')): ?>
+                    <div class="ps-widget" style="flex: 1 1 calc(33.333% - 16px); box-sizing: border-box;">
+                        <p class="ps-text">
+                            <strong><?php esc_html_e('Validator', 'bcc-core'); ?></strong><br>
+                            <?php esc_html_e('Review and validate community submissions.', 'bcc-core'); ?>
+                        </p>
+                        <a href="<?php echo esc_url($validate_url); ?>" class="ps-btn ps-btn--primary ps-btn--sm">
+                            <?php esc_html_e('Go to Validate', 'bcc-core'); ?>
+                        </a>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($can('bcc_can_create')): ?>
+                    <div class="ps-widget" style="flex: 1 1 calc(33.333% - 16px); box-sizing: border-box;">
+                        <p class="ps-text">
+                            <strong><?php esc_html_e('NFT Creator', 'bcc-core'); ?></strong><br>
+                            <?php esc_html_e('Create and manage NFT assets.', 'bcc-core'); ?>
+                        </p>
+                        <a href="<?php echo esc_url($create_url); ?>" class="ps-btn ps-btn--primary ps-btn--sm">
+                            <?php esc_html_e('Go to Create', 'bcc-core'); ?>
+                        </a>
+                    </div>
+                <?php endif; ?>
+
+            </div>
         </div>
     </div>
+
 
     <!-- GUIDANCE -->
     <div class="ps-card ps-card--profile">
