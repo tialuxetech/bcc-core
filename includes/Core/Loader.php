@@ -47,7 +47,15 @@ final class Loader {
             BCC_CORE_VERSION,
             true
         );
+    
+        wp_enqueue_style(
+            'bcc-core-frontend',
+            BCC_CORE_URL . 'assets/css/bcc-core-frontend.css',
+            ['acf-input'],
+            BCC_CORE_VERSION
+        );
     }
+
 
     /**
      * Register core modules

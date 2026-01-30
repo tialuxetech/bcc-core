@@ -1,0 +1,69 @@
+/* ===============================
+   BCC Frontend ACF Forms (Global)
+   =============================== */
+
+.bcc-acf-form form.acf-form {
+    max-width: 720px;
+}
+
+.bcc-acf-form .acf-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+/* Labels */
+.bcc-acf-form .acf-field > .acf-label label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Inputs */
+.bcc-acf-form .acf-input input[type="text"],
+.bcc-acf-form .acf-input input[type="email"],
+.bcc-acf-form .acf-input input[type="url"],
+.bcc-acf-form .acf-input textarea,
+.bcc-acf-form .acf-input select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #dcdcdc;
+    background: #fff;
+    font-size: 14px;
+}
+
+/* Focus */
+.bcc-acf-form .acf-input input:focus,
+.bcc-acf-form .acf-input textarea:focus,
+.bcc-acf-form .acf-input select:focus {
+    outline: none;
+    border-color: #1d72f3;
+}
+
+/* Description text */
+.bcc-acf-form .acf-field .description {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Submit button */
+.bcc-acf-form .acf-form-submit {
+    margin-top: 12px;
+}
+
+.bcc-acf-form .acf-form-submit input[type="submit"] {
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    width: 100%;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Align nicely inside PeepSo cards */
+.ps-card .bcc-acf-form {
+    margin-top: 16px;
+}
